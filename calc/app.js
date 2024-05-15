@@ -33,15 +33,44 @@ app.get("/mean", function (req, res) {
 
 });
 
-/** Finds median of nums in qs: returns {operation: "median", result } */
-app.get("/median", function (req, rest) {
+/** Finds median of nums in qs
+ * Returns: ( response: { operation: "median", result } }
+ */
+app.get("/median", function (req, res) {
   const nums = req.query.nums;
-  console.log(nums);
+  let median;
+  const numbers = nums.split(',').map(str => Number(str));
+  const invalidNums = numbers.filter(num => isNaN(num));
+
+  if (nums === '' || invalidNums.length > 0) {
+    throw new BadRequestError;
+  } else {
+    median = findMedian(numbers);
+  }
+
+  return res.json({
+    response: { operation: 'median', value: median }
+  });
 });
 
-/** Finds mode of nums in qs: returns {operation: "mean", result } */
+/** Finds mode of nums in qs
+ * Returns: { response: { operation: "mode", result } }
+ */
 app.get('/mode', function (req, res) {
+  const nums = req.query.nums;
+  let mode;
+  const numbers = nums.split(',').map(str => Number(str));
+  const invalidNums = numbers.filter(num => isNaN(num));
 
+  if (nums === '' || invalidNums.length > 0) {
+    throw new BadRequestError;
+  } else {
+    mode = findMode(numbers);
+  }
+
+  return res.json({
+    response: { operation: 'mode', value: mode }
+  });
 });
 
 /** 404 handler: matches unmatched routes; raises NotFoundError. */
